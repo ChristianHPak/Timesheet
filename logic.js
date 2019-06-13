@@ -13,11 +13,14 @@ firebase.initializeApp(firebaseConfig);
 var database = firebase.database();
 
 database.ref().on("child_added", function (ChildSnapshot) {
-   var newRow = $("<div class='row'>")
-    $(".card-body").html(newRow);
+    var newRow = $(".huh").html(newRow);
     newRow.addClass("pt-5")
-   
-    $("#EmployeeList").append("<div class='row'><span class='col-md-2>' " + ChildSnapshot.val().EmployeeName + "<span class='col-md-2>" + ChildSnapshot.val().EmployeeRole + "<span class='col-md-2>" + ChildSnapshot.val().EmployeeStartDate + "<span class='col-md-2>" + ChildSnapshot.val().EmployeeMonthlyRate)
+
+    $("tbody").append("<th scope='col'> " + ChildSnapshot.val().EmployeeName + "<td scope='col'>" + ChildSnapshot.val().EmployeeRole + "<td scope='col'>" + ChildSnapshot.val().EmployeeStartDate + "<td scope='col'>" + ChildSnapshot.val().MonthsWorked + "<td scope='col'>" + ChildSnapshot.val().EmployeeMonthlyRate + "<td scope='col'>" + ChildSnapshot.val().TotalBilled)
+
+
+}, function (errorObj) {
+    console.log("Errors handled: " + errorObj.code)
 });
 
 $("#Employee-Submit").on("click", function (event) {
@@ -25,19 +28,22 @@ $("#Employee-Submit").on("click", function (event) {
 
     var EmployeeName = $("#Employee-Name").val().trim();
     var EmployeeRole = $("#Employee-Role").val().trim();
-    var EmployeeStartDate = $("#Employee-StartDate").val().trim();
-    var EmployeeMonthlyRate = parseInt($("#Employee-MonthlyRate").val().trim());
+    var EmployeeStartDate = moment.unix(EmployeeStartDate).format("MM/DD/YYYY");
+    var EmployeeMonthlyRate = parseInt($("#Employee-MonthlyRate").val());
 
-    // var MonthsWorked = 
-    // var TotalBilled = 
+    var MonthsWorked = moment().diff(moment.unix(EmployeeStartDate, "X"), "months");
+    console.log(MonthsWorked)
+    var TotalBilled = (MonthsWorked * EmployeeMonthlyRate);
 
     //saves info in database
     database.ref().push({
         EmployeeName: EmployeeName,
         EmployeeRole: EmployeeRole,
-        EmployeeStartDate: EmployeeMonthlyRate,
-        EmployeeStartDate: EmployeeStartDate
-      });
+        EmployeeMonthlyRate: EmployeeMonthlyRate,
+        EmployeeStartDate: EmployeeStartDate,
+        MonthsWorked: MonthsWorked,
+        TotalBilled: TotalBilled
+    });
 
     $("input").val("")
 });
