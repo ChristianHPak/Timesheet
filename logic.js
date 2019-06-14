@@ -26,7 +26,7 @@ $("#Employee-Submit").on("click", function (event) {
 
     var EmployeeName = $("#Employee-Name").val().trim();
     var EmployeeRole = $("#Employee-Role").val().trim();
-    var EmployeeStartDate = $("#StartDate").val();
+    var EmployeeStartDate = $("#Employee-StartDate").val();
     var EmployeeMonthlyRate = parseInt($("#Employee-MonthlyRate").val());
 
     // var MonthsWorked = moment().diff(moment.unix(EmployeeStartDate, "X"), "months");
