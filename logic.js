@@ -14,7 +14,7 @@ var database = firebase.database();
 
 database.ref().on("child_added", function (ChildSnapshot) {
 
-    $("tbody").append("<tr>" + "<th scope='col'> " + ChildSnapshot.val().EmployeeName + "<td scope='col'>" + ChildSnapshot.val().EmployeeRole + "<td scope='col'>" + ChildSnapshot.val().EmployeeStartDate + "<td scope='col'>" + ChildSnapshot.val().MonthsWorked + "<td scope='col'>" + ChildSnapshot.val().EmployeeMonthlyRate + "<td scope='col'>" + ChildSnapshot.val().TotalBilled)
+    $("tbody").append("<tr>" + "<th scope='col'> " + ChildSnapshot.val().EmployeeName + "<td scope='col'>" + ChildSnapshot.val().EmployeeRole + "<td scope='col'>" + ChildSnapshot.val().EmployeeStartDate + "<td scope='col'>" + ChildSnapshot.val().MonthsWorked + " Month(s)" + "<td scope='col'>" + ChildSnapshot.val().EmployeeMonthlyRate + "<td scope='col'> $" + ChildSnapshot.val().TotalBilled)
 
 
 }, function (errorObj) {
@@ -24,14 +24,15 @@ database.ref().on("child_added", function (ChildSnapshot) {
 $("#Employee-Submit").on("click", function (event) {
     event.preventDefault();
 
+    var todaysdate = moment()
+
     var EmployeeName = $("#Employee-Name").val().trim();
     var EmployeeRole = $("#Employee-Role").val().trim();
-    var EmployeeStartDate = $("#Employee-StartDate").val();
+    var EmployeeStartDate = moment($("#Employee-StartDate").val()).format('L');
     var EmployeeMonthlyRate = parseInt($("#Employee-MonthlyRate").val());
 
-    // var MonthsWorked = moment().diff(moment.unix(EmployeeStartDate, "X"), "months");
-    // console.log(MonthsWorked)
-    // var TotalBilled = (MonthsWorked * EmployeeMonthlyRate);
+    var MonthsWorked = moment().diff(EmployeeStartDate, 'month')
+    var TotalBilled = (MonthsWorked * EmployeeMonthlyRate);
 
     //saves info in database
     database.ref().push({
@@ -39,8 +40,8 @@ $("#Employee-Submit").on("click", function (event) {
         EmployeeRole: EmployeeRole,
         EmployeeMonthlyRate: EmployeeMonthlyRate,
         EmployeeStartDate: EmployeeStartDate,
-        // MonthsWorked: MonthsWorked,
-        // TotalBilled: TotalBilled
+        MonthsWorked: MonthsWorked,
+        TotalBilled: TotalBilled
     });
 
     $("input").val("")
